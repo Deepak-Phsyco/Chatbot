@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KVD-GPT Chatbot</title>
+  <style>
+    body {
+      background: #eaeaea;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .chat-container {
+      width: 420px;
+      height: 600px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 15px;
+      background: #1e90ff;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div id="chat-box"></div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Ask about Class 12 squad..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const responses = {
+      "deepak": [
+        "Deepak is the Physics specialist, funny and cheerful. Always underestimates his marks and jokes about 'Sofia'.",
+        "He’s the best volleyball server and center player in the class!"
+      ],
+      "ayush": [
+        "Ayush is the Math topper, smart and honest. People joke about 'Antina', and he has a girl in Ahmedabad.",
+        "He’s the best net player and a leader among the App Boys!"
+      ],
+      "utkarsh": [
+        "Utkarsh is artistic, peaceful now, and has a deep bond with Deepak and Manisha.",
+        "Once very depressed, now happy and calm. Comes from Dantiwada."
+      ],
+      "jeet": [
+        "Jeet is the Chemistry genius with a great sense of humor. Loved for his 'Habibi from Dubai' role!",
+        "He’s friendly with everyone and hates abusive language."
+      ],
+      "raj": [
+        "Raj is silent, has the best handwriting, expert in Hindi, but weak in Math. Once liked a girl called 'Waiting'.",
+        "Great at volleyball, lives in Madana."
+      ],
+      "smit": [
+        "Smit is a CS specialist, has the worst handwriting, and is often late. Once had a crush on Arohi.",
+        "He’s average in volleyball and lives in Palanpur."
+      ],
+      "karan": [
+        "Karan is sarcastic with Deepak and good at volleyball. He had many crushes but is now single.",
+        "He lives in Madana and is in Red House."
+      ],
+      "harshil": [
+        "Harshil is the mimicry king, fatty, and funny. Roasted most by Ritesh Sir!",
+        "He’s 'engaged' with Nisha and plays beginner volleyball."
+      ],
+      "dhruv": [
+        "Dhruv is called 'Kalu', a backbencher with high IQ. Loves Math and Physics.",
+        "Best friends with Harshil, had a crush on a girl named Nisha."
+      ],
+      "teachers": [
+        "Ashok Sir teaches Math, loves Math students and tells life stories.",
+        "Monika Ma’am is like a mom in Chemistry class. Ritesh Sir roasts students using a stick for homework!",
+        "Sanchi Ma’am (CS) gives samosas and has AIR 1. Principal Varun Sir has a Swift, unlike his dad’s Alto!"
+      ],
+      "volleyball": [
+        "Volleyball legends: Deepak (best server), Ayush (net king), Raj (all-rounder), Karan (net+back).",
+        "Sagar, Utkarsh, Smit are average. Harshil, Jeet, Dhruv — beginners!"
+      ],
+      "houses": [
+        "Red: Karan, Utkarsh, Antima. Yellow: Ayush, Manisha, Smit. Blue: Sagar, Bharat. Green: Deepak, Harshil, Dhruv, Raj, Angle, Nirzara."
+      ],
+      "bye": ["See you, legend!", "KVD-GPT signing off!", "Goodbye, topper!"],
+      "default": ["Hmm, I don’t know that yet. Try asking about someone from Class 12!", "That’s beyond KVD campus knowledge."]
+    };
+
+    const memory = {};
+    const used = {};
+
+    function sendMessage() {
+      const input = document.getElementById("user-input");
+      const text = input.value.trim().toLowerCase();
+      if (!text) return;
+
+      addMessage("You", text);
+      const reply = getResponse(text);
+      addMessage("KVD-GPT", reply);
+      input.value = "";
+    }
+
+    function addMessage(sender, message) {
+      const chatBox = document.getElementById("chat-box");
+      const msg = document.createElement("div");
+      msg.innerHTML = `<strong>${sender}:</strong> ${message}`;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getResponse(input) {
+      if (memory[input]) return `(Memory) ${memory[input]}`;
+
+      for (let key in responses) {
+        if (input.includes(key)) {
+          const available = responses[key].filter(r => !(used[key] || []).includes(r));
+          if (available.length > 0) {
+            const reply = available[Math.floor(Math.random() * available.length)];
+            memory[input] = reply;
+            used[key] = [...(used[key] || []), reply];
+            return reply;
+          } else {
+            return "(Already told you everything I know about that!)";
+          }
+        }
+      }
+
+      const fallback = responses["default"];
+      const reply = fallback[Math.floor(Math.random() * fallback.length)];
+      memory[input] = reply;
+      return reply;
+    }
+  </script>
+</body>
+</html>
